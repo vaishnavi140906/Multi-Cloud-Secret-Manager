@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Cloud Secret Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            🔐 <span>CloudVault</span>
+        </div>
+
+        <nav>
+            <a href="#" class="active" onclick="showSection('dashboard')">
+                📊 Dashboard
+            </a>
+
+            <a href="#" onclick="showSection('secrets')">
+                🔑 Secrets
+            </a>
+
+            <a href="#" onclick="showSection('sync')">
+                🔄 Synchronization
+            </a>
+
+            <a href="#" onclick="showSection('alerts')">
+                🚨 Expiry Alerts
+            </a>
+
+            <a href="#" onclick="showSection('logs')">
+                📋 Audit Logs
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button onclick="logout()">🚪 Logout</button>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="main">
+
+        <!-- Header -->
+        <header class="topbar">
+
+            <div>
+                <h1>Multi-Cloud Secret Manager</h1>
+                <p>Securely manage and monitor your cloud secrets.</p>
+            </div>
+
+            <div class="user">
+                <div class="avatar">V</div>
+                <div>
+                    <strong>Admin</strong>
+                    <small>Cloud Administrator</small>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section active-section">
+
+            <div class="section-title">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p>Overview of your cloud secrets.</p>
+                </div>
+
+                <button class="primary-btn" onclick="openModal()">
+                    + Add Secret
+                </button>
+            </div>
+
+
+            <!-- Statistics -->
+            <div class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon">🔐</div>
+                    <div>
+                        <h3 id="totalSecrets">0</h3>
+                        <p>Total Secrets</p>
+                    </div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-icon">⏰</div>
+                    <div>
+                        <h3 id="expiringSecrets">0</h3>
+                        <p>Expiring Soon</p>
+                    </div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-icon">🔄</div>
+                    <div>
+                        <h3 id="syncedSecrets">0</h3>
+                        <p>Synced Secrets</p>
+                    </div>
+                </div>
+
+                <div class="stat-card danger">
+                    <div class="stat-icon">🚨</div>
+                    <div>
+                        <h3 id="expiredSecrets">0</h3>
+                        <p>Expired</p>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Cloud Status -->
+            <div class="cloud-section">
+
+                <h2>Cloud Connections</h2>
+
+                <div class="cloud-grid">
+
+                    <div class="cloud-card">
+                        <div class="cloud-logo aws">AWS</div>
+                        <div>
+                            <h3>Amazon Web Services</h3>
+                            <p class="connected">● Connected</p>
+                        </div>
+                    </div>
+
+                    <div class="cloud-card">
+                        <div class="cloud-logo azure">AZ</div>
+                        <div>
+                            <h3>Microsoft Azure</h3>
+                            <p class="connected">● Connected</p>
+                        </div>
+                    </div>
+
+                    <div class="cloud-card">
+                        <div class="cloud-logo gcp">G</div>
+                        <div>
+                            <h3>Google Cloud</h3>
+                            <p class="disconnected">● Not Connected</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Recent Secrets -->
+            <div class="table-container">
+
+                <div class="table-header">
+                    <h2>Recent Secrets</h2>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="🔍 Search secrets..."
+                        onkeyup="searchSecrets()"
+                    >
+                </div>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Secret Name</th>
+                            <th>Cloud</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>Sync</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="secretTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- SECRETS -->
+        <section id="secrets" class="section">
+
+            <div class="section-title">
+                <div>
+                    <h2>Secret Management</h2>
+                    <p>Manage all your cloud secrets.</p>
+                </div>
+
+                <button class="primary-btn" onclick="openModal()">
+                    + Add Secret
+                </button>
+            </div>
+
+            <div class="secret-info">
+                <h3>🔐 Secure Secret Storage</h3>
+                <p>
+                    Secrets should never be exposed directly in the frontend.
+                    They will be securely handled by the backend and cloud
+                    secret managers.
+                </p>
+            </div>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Secret Name</th>
+                            <th>Cloud</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>Sync</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="secretTable2">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- SYNC -->
+        <section id="sync" class="section">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>Cloud Synchronization</h2>
+                    <p>Synchronize secrets between cloud providers.</p>
+                </div>
+
+                <button class="primary-btn" onclick="syncAll()">
+                    🔄 Sync All
+                </button>
+
+            </div>
+
+
+            <div class="sync-box">
+
+                <div class="sync-cloud">
+                    <div class="big-cloud aws">AWS</div>
+                    <h3>AWS Secrets Manager</h3>
+                    <p>Connected</p>
+                </div>
+
+                <div class="arrow">⟷</div>
+
+                <div class="sync-cloud">
+                    <div class="big-cloud azure">AZ</div>
+                    <h3>Azure Key Vault</h3>
+                    <p>Connected</p>
+                </div>
+
+            </div>
+
+
+            <div id="syncMessage" class="sync-message">
+                Last synchronization: Not yet performed
+            </div>
+
+        </section>
+
+
+        <!-- ALERTS -->
+        <section id="alerts" class="section">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>Expiry Alerts</h2>
+                    <p>Secrets that require your attention.</p>
+                </div>
+
+            </div>
+
+            <div id="alertsContainer">
+            </div>
+
+        </section>
+
+
+        <!-- LOGS -->
+        <section id="logs" class="section">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>Audit Logs</h2>
+                    <p>Track secret management activities.</p>
+                </div>
+
+            </div>
+
+            <div class="logs-container" id="logsContainer">
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ADD SECRET MODAL -->
+    <div class="modal" id="secretModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2>🔐 Add New Secret</h2>
+
+                <button onclick="closeModal()">×</button>
+            </div>
+
+            <form id="secretForm">
+
+                <label>Secret Name</label>
+                <input
+                    type="text"
+                    id="secretName"
+                    placeholder="Example: Database Password"
+                    required
+                >
+                <label>Secret Value</label>
+                <input
+                    type="password"
+                    id="secretValue"
+                    placeholder="Enter secret value"
+                    required
+                >
+
+
+                <label>Cloud Provider</label>
+
+                <select id="cloudProvider" required>
+
+                    <option value="">
+                        Select Cloud
+                    </option>
+
+                    <option value="AWS">
+                        AWS Secrets Manager
+                    </option>
+
+                    <option value="Azure">
+                        Azure Key Vault
+                    </option>
+
+                    <option value="Google Cloud">
+                        Google Cloud Secret Manager
+                    </option>
+
+                </select>
+
+
+                <label>Expiry Date</label>
+
+                <input
+                    type="date"
+                    id="expiryDate"
+                    required
+                >
+
+
+                <label>Sync To</label>
+
+                <div class="checkbox-group">
+
+                    <label>
+                        <input type="checkbox" value="AWS">
+                        AWS
+                    </label>
+
+                    <label>
+                        <input type="checkbox" value="Azure">
+                        Azure
+                    </label>
+
+                    <label>
+                        <input type="checkbox" value="GCP">
+                        Google Cloud
+                    </label>
+
+                </div>
+
+
+                <button type="submit" class="submit-btn">
+                    Add Secret
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
